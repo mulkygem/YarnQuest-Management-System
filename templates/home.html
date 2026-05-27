@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="row align-items-center mb-5">
+  <div class="col-lg-6">
+    <div class="p-4 rounded-4 shadow-sm bg-white">
+      <h1 class="display-5 mb-3">Shop craft supplies instantly</h1>
+      <p class="lead text-muted mb-4">Browse yarns, hooks, needles, measuring tapes, kits and more from local vendors before you log in.</p>
+      <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-2">Join as Vendor or Crafter</a>
+      <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">Login</a>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="home-hero-preview rounded-4 shadow-sm overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80" class="img-fluid" alt="Craft supplies">
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-12 text-center">
+    <h3 class="section-title">Popular craft products</h3>
+    <p class="text-muted">See what vendors are selling now, including prices and stock status.</p>
+  </div>
+</div>
+
+<div class="row">
+  {% for item in items %}
+  <div class="col-lg-4 col-md-6 mb-4">
+    <div class="card item-card h-100 shadow-sm overflow-hidden">
+      <img src="{{ item.image_url or 'https://via.placeholder.com/600x350?text=Craft+Item' }}" class="card-img-top" alt="{{ item.name }}">
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ item.name }}</h5>
+        <p class="small text-muted mb-2">{{ item.category }} · {{ item.vendor_name }}</p>
+        <p class="card-text mb-3">{{ item.description or 'High-quality craft supply from a local vendor.' }}</p>
+        <div class="mb-3">
+          <span class="badge bg-info text-dark me-2">KES {{ item.price }}</span>
+          {% if item.in_stock %}
+          <span class="badge bg-success">In Stock</span>
+          {% else %}
+          <span class="badge bg-danger">Out of Stock</span>
+          {% endif %}
+        </div>
+        <p class="text-muted mb-3">Location: {{ item.location or 'Unknown' }}</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary mt-auto">Login to Buy</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

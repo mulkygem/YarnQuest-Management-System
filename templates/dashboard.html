@@ -1,0 +1,105 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="hero-card p-4 rounded-4 shadow-sm text-white">
+      <h1 class="hero-title mb-3">Find yarn, hooks, needles, kits, and craft supplies fast.</h1>
+      <p class="hero-text mb-3">Browse local vendor stock, see prices, and know whether each item is in stock or out of stock before you buy.</p>
+      <div>
+        <span class="badge bg-light text-dark me-2 mb-2">Yarn</span>
+        <span class="badge bg-light text-dark me-2 mb-2">Hooks</span>
+        <span class="badge bg-light text-dark me-2 mb-2">Needles</span>
+        <span class="badge bg-light text-dark me-2 mb-2">Measuring Tape</span>
+        <span class="badge bg-light text-dark mb-2">Craft Kits</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-8">
+    <div class="card p-4 shadow-sm profile-card">
+      <h2 class="mb-3">Hello, {{ user.full_name }}</h2>
+      <div class="d-flex flex-wrap gap-3 mb-3">
+        <span class="badge bg-primary">{{ role.title() }}</span>
+        <span class="badge bg-secondary">{{ user.location or 'Location not set' }}</span>
+        <span class="badge bg-success">{{ user.contact_info or 'Contact info not set' }}</span>
+      </div>
+      <p class="text-muted mb-0">Use the dashboard to manage items, review stock status, and connect with vendors or crafters quickly.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 shadow-sm stats-card">
+      <h5>Quick actions</h5>
+      <div class="d-grid gap-2 mt-3">
+        {% if role == 'vendor' %}
+        <a class="btn btn-outline-light" href="{{ url_for('add_item') }}">Add New Craft Item</a>
+        {% endif %}
+        <button id="locateBtn" class="btn btn-outline-light">Share My Location</button>
+      </div>
+      <p id="locationOutput" class="mt-3 text-white-50"></p>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-12">
+    <h4 class="section-title">Featured Products</h4>
+    <p class="text-muted">Example stock from local vendors with instant availability and pricing information.</p>
+  </div>
+</div>
+
+<div class="row">
+  {% if items %}
+    {% for item in items %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card item-card h-100 shadow-sm overflow-hidden">
+          <img src="{{ item.image_url or 'https://via.placeholder.com/600x350?text=Craft+Item' }}" class="card-img-top" alt="{{ item.name }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="small text-muted mb-2">{{ item.category }} · {{ item.vendor_name }}</p>
+            <p class="card-text mb-3">{{ item.description or 'Craft supply from local vendor.' }}</p>
+            <div class="mb-3">
+              <span class="badge bg-info text-dark me-2">KES {{ item.price }}</span>
+              {% if item.in_stock %}
+              <span class="badge bg-success">In Stock</span>
+              {% else %}
+              <span class="badge bg-danger">Out of Stock</span>
+              {% endif %}
+            </div>
+            <p class="text-muted mb-3">Location: {{ item.location or 'Unknown' }}</p>
+            <a class="btn btn-primary mt-auto" href="{{ url_for('pay', item_id=item.id) }}">Pay with MPESA</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% elif sample_items %}
+    {% for item in sample_items %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card item-card h-100 shadow-sm overflow-hidden">
+          <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.name }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ item.name }}</h5>
+            <p class="small text-muted mb-2">{{ item.category }} · {{ item.vendor_name }}</p>
+            <p class="card-text mb-3">{{ item.description }}</p>
+            <div class="mb-3">
+              <span class="badge bg-info text-dark me-2">KES {{ item.price }}</span>
+              {% if item.in_stock %}
+              <span class="badge bg-success">In Stock</span>
+              {% else %}
+              <span class="badge bg-danger">Out of Stock</span>
+              {% endif %}
+            </div>
+            <p class="text-muted mb-3">Location: {{ item.location }}</p>
+            <a class="btn btn-primary mt-auto" href="{{ url_for('pay', item_id=0) }}">Pay with MPESA</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="alert alert-info">No items are available right now. Vendors can add yarn, hooks, needles, measuring tapes, kits, and more.</div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

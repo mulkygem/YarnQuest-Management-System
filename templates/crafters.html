@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="catalogue-page py-4">
+  <div class="catalogue-header p-4 mb-4 shadow-sm">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+      <div>
+        <h1 class="mb-2">Catalogue</h1>
+        <p class="text-white-75 mb-0">Browse products for crafters with stock status, prices, and direct add-to-cart access.</p>
+      </div>
+      <div class="text-md-end">
+        <p class="text-white-75 mb-1">{# Placeholder for location/status #}</p>
+        <a class="btn btn-light btn-sm" href="{{ url_for('cart') }}">View cart ({{ cart_count }})</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card catalogue-card shadow-sm overflow-hidden">
+    {% for item in items %}
+    <div class="catalogue-list-item">
+      <img src="{{ item.image_url or 'https://via.placeholder.com/120?text=Craft' }}" alt="{{ item.name }}">
+      <div class="catalogue-item-details">
+        <p class="catalogue-item-title mb-1">{{ item.name }}</p>
+        <p class="catalogue-item-description mb-2">{{ item.description or 'Craft supply with price and stock details.' }}</p>
+        <div class="catalogue-item-meta">
+          <span>{{ item.category }}</span>
+          <span>KES {{ item.price }}</span>
+          <span>{{ item.location or 'Location unknown' }}</span>
+          {% if item.in_stock %}
+          <span class="text-success">In stock</span>
+          {% else %}
+          <span class="text-danger">Out of stock</span>
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        {% if item.id %}
+        <a class="catalogue-add-btn" href="{{ url_for('cart_add', item_id=item.id) }}" title="Add to cart">+</a>
+        {% else %}
+        <button class="catalogue-add-btn" disabled title="Login to add">+</button>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="catalogue-footer">
+      <div>
+        <strong>{{ items|length }}</strong> products available for crafters.
+      </div>
+      <a class="btn btn-primary" href="{{ url_for('cart') }}">View cart ({{ cart_count }})</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
