@@ -1,0 +1,7 @@
+# Ignore SQLite database files
+*.sqlite3
+*.sqlite
+*.db
+.env
+.env.local
+config.json

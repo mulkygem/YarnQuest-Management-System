@@ -1,6 +1,14 @@
 CREATE DATABASE IF NOT EXISTS yarnquest CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE yarnquest;
 
+CREATE TABLE IF NOT EXISTS categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  icon VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(150) NOT NULL,
@@ -38,3 +46,12 @@ CREATE TABLE IF NOT EXISTS payments (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Insert default yarn categories
+INSERT INTO categories (name, description, icon) VALUES
+('Yarn', 'Premium yarn in various weights and fibers', '🧶'),
+('Hooks', 'Ergonomic crochet hooks for comfort', '🪝'),
+('Needles', 'Quality knitting needles in all sizes', '🪡'),
+('Measuring Tape', 'Precision measuring tools for projects', '📏'),
+('Kits', 'Complete project kits for beginners', '📦'),
+('Accessories', 'Stitch markers, counters, and more', '✨');

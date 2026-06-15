@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Shop - YarnQuest</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    
+    .logo-font { font-family: 'Playfair Display', serif; }
+    .yarn-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .yarn-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    }
+    .category-filter {
+      transition: all 0.3s ease;
+    }
+    .category-filter.active {
+      background-color: #f59e0b;
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-neutral-50 font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-500 shadow-none my-3 navbar-transparent relative bg-white/90 backdrop-blur-md" >
+    <div class="max-w-7xl mx-auto px-6 w-full">
+      <div class="flex items-center justify-between">
+        <a class="navbar-brand text-aqua" style="color: aqua; flex items-center gap-3 text-2xl font-bold logo-font" href="{{ url_for('index') }}">
+          <span class="text-4xN">🧶</span> YarnQuests
+        </a>
+        
+        <div class="hidden md:flex items-center gap-x-8 text-gray-700 font-medium">
+          <a href="{{ url_for('index') }}" class="hover:text-amber-300 transition">Home</a>
+          <a href="#" class="hover:text-amber-300 transition">Collections</a>
+          <a href="#" class="hover:text-amber-300 transition">Yarn Types</a>
+          <a href="#" class="hover:text-amber-300 transition">About Us</a>
+          <a href="#" class="hover:text-amber-300 transition">Journal</a>
+        </div>
+
+        <div class="flex items-center gap-x-6">
+          {% if session.get('user_id') %}
+          <a href="{{ url_for('cart') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Cart</a>
+          <a href="{{ url_for('cart') }}" class="text-xl text-gray-700 relative">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="absolute -top-1 -right-1 text-xs bg-amber-500 text-white w-5 h-5 rounded-full flex items-center justify-center">{{ session.get('cart', [])|length }}</span>
+          </a>
+          <a href="{{ url_for('dashboard') if session.get('role') == 'vendor' else url_for('shop') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Dashboard</a>
+          <a href="{{ url_for('logout') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Login</a>
+          <a href="{{ url_for('register') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Register</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <section class="bg-gradient-to-r from-amber-50 to-orange-50 pt-40 pb-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-4 logo-font">Yarn Shop</h1>
+      <p class="text-xl text-gray-600">Discover our complete collection of premium yarn and craft supplies</p>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER -->
+  <section class="py-12 bg-white border-b border-neutral-200">
+    <div class="max-w-7xl mx-auto px-6">
+      <h3 class="text-lg font-semibold mb-6 text-gray-900">Filter by Category</h3>
+      <div class="flex flex-wrap gap-3">
+        <button class="category-filter active px-6 py-3 rounded-full border-2 border-amber-500 bg-amber-500 text-white font-medium transition" data-filter="all">
+          All Products
+        </button>
+        {% for category in categories %}
+        <button class="category-filter px-6 py-3 rounded-full border-2 border-amber-200 text-gray-700 font-medium hover:border-amber-500 transition" data-filter="{{ category }}">
+          {{ category }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS GRID -->
+  <section class="py-20 bg-neutral-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div id="products-container" class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% for item in items %}
+        <div class="yarn-card bg-white rounded-3xl overflow-hidden" data-category="{{ item.category }}">
+          <img src="{{ item.image_url or 'https://via.placeholder.com/600x600?text=' + item.name }}" class="w-full h-80 object-cover" alt="{{ item.name }}">
+          <div class="p-6">
+            <span class="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full mb-3">{{ item.category }}</span>
+            <h5 class="font-semibold text-lg mb-2">{{ item.name }}</h5>
+            <p class="text-sm text-neutral-500 mb-3">{{ item.vendor_name }}</p>
+            <p class="text-sm text-neutral-600 mb-4">{{ item.description or 'Premium quality craft supply' }}</p>
+            <div class="flex justify-between items-end">
+              <div>
+                <span class="text-3xl font-bold text-amber-600">KES {{ "%.2f"|format(item.price) }}</span>
+                <p class="text-xs text-gray-500 mt-1">📍 {{ item.location or 'Kisumu' }}</p>
+              </div>
+              <div>
+                {% if item.in_stock %}
+                <span class="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full mb-2">In Stock</span>
+                {% else %}
+                <span class="inline-block px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full mb-2">Out of Stock</span>
+                {% endif %}
+              </div>
+            </div>
+            <a href="{{ url_for('cart_add', item_id=item.id) }}" class="mt-4 w-full bg-neutral-900 text-white px-6 py-3 rounded-2xl text-sm font-medium hover:bg-neutral-800 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+            </a>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-span-full py-12 text-center">
+          <p class="text-xl text-gray-500">No products found</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="text-5xl mb-4">🌿</div>
+          <h4 class="font-semibold text-lg mb-2">Natural Fibers</h4>
+          <p class="text-gray-600 text-sm">Ethically sourced premium materials</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-4">🎨</div>
+          <h4 class="font-semibold text-lg mb-2">Vibrant Colors</h4>
+          <p class="text-gray-600 text-sm">200+ hand-dyed shades available</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-4">📦</div>
+          <h4 class="font-semibold text-lg mb-2">Fast Shipping</h4>
+          <p class="text-gray-600 text-sm">Delivered to your doorstep quickly</p>
+        </div>
+        <div class="text-center">
+          <div class="text-5xl mb-4">💚</div>
+          <h4 class="font-semibold text-lg mb-2">Sustainable</h4>
+          <p class="text-gray-600 text-sm">Eco-friendly packaging always</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white pt-16 pb-8 border-t border-neutral-200">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-5 gap-8">
+        <div>
+          <div class="flex items-center gap-3 text-2xl font-bold logo-font mb-4">
+            <span>🧶</span> YarnQuests
+          </div>
+          <p class="text-neutral-600">Premium yarn for intentional makers.</p>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Shop</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#" class="hover:text-amber-500">All Products</a></li>
+            <li><a href="#" class="hover:text-amber-500">Best Sellers</a></li>
+            <li><a href="#" class="hover:text-amber-500">New Arrivals</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Support</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#" class="hover:text-amber-500">Help Center</a></li>
+            <li><a href="#" class="hover:text-amber-500">Contact Us</a></li>
+            <li><a href="#" class="hover:text-amber-500">FAQs</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">About</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#" class="hover:text-amber-500">Our Story</a></li>
+            <li><a href="#" class="hover:text-amber-500">Blog</a></li>
+            <li><a href="#" class="hover:text-amber-500">Careers</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Newsletter</h6>
+          <p class="text-sm text-neutral-600 mb-4">Stay updated with new arrivals</p>
+          <input type="email" placeholder="your@email.com" class="w-full border border-neutral-300 rounded-2xl px-4 py-2 text-sm mb-2">
+          <button class="w-full bg-amber-500 text-white py-2 rounded-2xl text-sm font-medium hover:bg-amber-600">Subscribe</button>
+        </div>
+      </div>
+      <hr class="my-8">
+      <p class="text-center text-neutral-600 text-sm">© 2026 YarnQuests. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Category filtering
+    const filterButtons = document.querySelectorAll('.category-filter');
+    const productCards = document.querySelectorAll('[data-category]');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const filterValue = this.getAttribute('data-filter');
+        
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active', 'bg-amber-500', 'text-white', 'border-amber-500'));
+        this.classList.add('active', 'bg-amber-500', 'text-white', 'border-amber-500');
+        
+        // Filter products
+        productCards.forEach(card => {
+          if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+            card.style.display = 'block';
+            setTimeout(() => card.style.opacity = '1', 10);
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    console.log("%c🧶 YarnQuest Shop - Ready", "color:#f59e0b; font-family:monospace");
+  </script>
+</body>
+</html>

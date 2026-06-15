@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Payment Failed - YarnQuest</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    .logo-font { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-neutral-50 font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-500 shadow-none my-3 navbar-transparent relative bg-white/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 w-full">
+      <div class="flex items-center justify-between">
+        <a class="navbar-brand text-aqua" style="color: aqua; flex items-center gap-3 text-2xl font-bold logo-font" href="{{ url_for('index') }}">
+          <span class="text-4xN">🧶</span> YarnQuests
+        </a>
+        <div class="flex items-center gap-x-6">
+          <a href="{{ url_for('cart') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Back to Cart</a>
+          <a href="{{ url_for('logout') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FAILURE CONTENT -->
+  <section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 pt-20 pb-12">
+    <div class="max-w-2xl w-full px-6">
+      <div class="bg-white rounded-3xl shadow-2xl p-12 text-center">
+        <!-- Failure Icon -->
+        <div class="mb-8 flex justify-center">
+          <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-xmark text-5xl text-red-500"></i>
+          </div>
+        </div>
+
+        <!-- Failure Message -->
+        <h1 class="text-4xl font-bold text-gray-900 mb-4 logo-font">Payment Failed</h1>
+        <p class="text-xl text-gray-600 mb-8">Unfortunately, your payment could not be processed.</p>
+
+        <!-- Error Details -->
+        <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 text-left rounded">
+          <h2 class="font-semibold text-red-900 mb-3">What happened?</h2>
+          <ul class="text-red-800 space-y-2 text-sm">
+            <li>✗ Your payment was declined</li>
+            <li>✗ Insufficient funds in your M-Pesa account</li>
+            <li>✗ Incorrect M-Pesa PIN was entered</li>
+            <li>✗ Transaction timed out</li>
+          </ul>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left rounded">
+          <h3 class="font-semibold text-blue-900 mb-2">How to Resolve:</h3>
+          <ol class="text-blue-800 space-y-2 text-sm list-decimal list-inside">
+            <li>Check your M-Pesa account balance</li>
+            <li>Ensure you have enough funds to complete the purchase</li>
+            <li>Verify your phone number is correct</li>
+            <li>Try again with the correct M-Pesa PIN</li>
+          </ol>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+          <a href="{{ url_for('cart') }}" class="flex-1 bg-amber-500 text-white py-3 rounded-lg font-bold hover:bg-amber-600 transition">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Return to Cart
+          </a>
+          <a href="{{ url_for('shop') }}" class="flex-1 bg-white border-2 border-gray-300 text-gray-900 py-3 rounded-lg font-bold hover:bg-gray-50 transition">
+            <i class="fa-solid fa-bag-shopping mr-2"></i>Continue Shopping
+          </a>
+        </div>
+
+        <!-- Support -->
+        <div class="mt-8 p-6 bg-gray-50 rounded-2xl">
+          <p class="text-gray-700 mb-4">Still having issues?</p>
+          <a href="#" class="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">
+            <i class="fa-solid fa-headset mr-2"></i>Contact Customer Support
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p class="text-gray-400">&copy; 2024 YarnQuest. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,50 +1,295 @@
-{% extends 'layout.html' %}
-{% block content %}
-<div class="row align-items-center mb-5">
-  <div class="col-lg-6">
-    <div class="p-4 rounded-4 shadow-sm bg-white">
-      <h1 class="display-5 mb-3">Shop craft supplies instantly</h1>
-      <p class="lead text-muted mb-4">Browse yarns, hooks, needles, measuring tapes, kits and more from local vendors before you log in.</p>
-      <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-2">Join as Vendor or Crafter</a>
-      <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg">Login</a>
-    </div>
-  </div>
-  <div class="col-lg-6">
-    <div class="home-hero-preview rounded-4 shadow-sm overflow-hidden">
-      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80" class="img-fluid" alt="Craft supplies">
-    </div>
-  </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>YarnQuest</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    
+    .logo-font { font-family: 'Playfair Display', serif; }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/static/yarn/home image.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+    .wave {
+      transition: all 0.4s ease;
+    }
+    .yarn-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .yarn-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    }
+  </style>
+</head>
+<body class="bg-neutral-50 font-sans">
 
-<div class="row mb-4">
-  <div class="col-12 text-center">
-    <h3 class="section-title">Popular craft products</h3>
-    <p class="text-muted">See what vendors are selling now, including prices and stock status.</p>
-  </div>
-</div>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-500 shadow-none my-3 navbar-transparent" " >
+    <div class="max-w-7xl mx-auto px-6 w-full">
+      <div class="flex items-center justify-between">
+        <a class="navbar-brand text-aqua" style="color: aqua; flex items-center gap-3 text-2xl font-bold logo-font" href="#">
+          <span class="text-size-lg">🧶</span> YarnQuests
+        </a>
+        
+        <div class="hidden md:flex items-center gap-x-8 text-gray-700 font-medium">
+          <a href="{{ url_for('shop') }}" class="hover:text-amber-300 transition">Shop</a>
+          <a href="#" class="hover:text-amber-300 transition">Collections</a>
+          <a href="#" class="hover:text-amber-300 transition">Yarn Types</a>
+        </div>
 
-<div class="row">
-  {% for item in items %}
-  <div class="col-lg-4 col-md-6 mb-4">
-    <div class="card item-card h-100 shadow-sm overflow-hidden">
-      <img src="{{ item.image_url or 'https://via.placeholder.com/600x350?text=Craft+Item' }}" class="card-img-top" alt="{{ item.name }}">
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">{{ item.name }}</h5>
-        <p class="small text-muted mb-2">{{ item.category }} · {{ item.vendor_name }}</p>
-        <p class="card-text mb-3">{{ item.description or 'High-quality craft supply from a local vendor.' }}</p>
-        <div class="mb-3">
-          <span class="badge bg-info text-dark me-2">KES {{ item.price }}</span>
-          {% if item.in_stock %}
-          <span class="badge bg-success">In Stock</span>
+        <div class="flex items-center gap-x-6">
+          {% if session.get('user_id') %}
+          <a href="{{ url_for('cart') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Cart ({{ session.get('cart', [])|length }})</a>
+          <a href="{{ url_for('dashboard') if session.get('role') == 'vendor' else url_for('shop') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Dashboard</a>
+          <a href="{{ url_for('logout') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Logout</a>
           {% else %}
-          <span class="badge bg-danger">Out of Stock</span>
+          <a href="{{ url_for('login') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Login</a>
+          <a href="{{ url_for('register') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Register</a>
           {% endif %}
         </div>
-        <p class="text-muted mb-3">Location: {{ item.location or 'Unknown' }}</p>
-        <a href="{{ url_for('login') }}" class="btn btn-primary mt-auto">Login to Buy</a>
       </div>
     </div>
-  </div>
-  {% endfor %}
-</div>
-{% endblock %}
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero-bg min-h-screen flex items-center relative">
+    <div class="container mx-auto px-6 pt-32">
+      <div class="max-w-2xl mx-auto text-center">
+        <h1 class="text-white text-6xl md:text-7xl font-bold logo-font leading-none mb-6">
+          Yarn that tells a story
+        </h1>
+        <p class="text-white/90 text-xl mb-10">
+          Premium natural fibers, hand-selected from the world's finest mills. 
+          For makers who create with intention.
+        </p>
+        <div class="flex gap-4 justify-center">
+          <a href="{{ url_for('shop') }}" 
+                  class="bg-white text-neutral-900 px-10 py-5 rounded-3xl font-semibold hover:bg-amber-400 transition inline-block">
+            Shop Collection
+          </a>
+          <button class="border border-white/70 text-white px-8 py-5 rounded-3xl font-medium hover:bg-white/10 transition">
+            Watch Our Story
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wave -->
+    <div class="absolute bottom-0 w-full">
+      <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 40" preserveAspectRatio="none" style="height: 80px; width: 100%;">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="moving-waves">
+          <use href="#gentle-wave" x="48" y="-1" fill="rgba(255,255,255,0.7)" />
+          <use href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use href="#gentle-wave" x="48" y="8" fill="#f8fafc" />
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- BENEFITS SECTION -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="grid grid-cols-2 gap-8">
+            <div class="yarn-card bg-white p-8 rounded-3xl shadow-sm border">
+              <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🌿</div>
+              <h5 class="text-2xl font-semibold mb-3">Natural Fibers</h5>
+              <p class="text-neutral-600">Ethically sourced merino, alpaca, cashmere & organic cotton.</p>
+            </div>
+            <div class="yarn-card bg-white p-8 rounded-3xl shadow-sm border">
+              <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🎨</div>
+              <h5 class="text-2xl font-semibold mb-3">Vibrant Palettes</h5>
+              <p class="text-neutral-600">Over 200 hand-dyed shades from soft pastels to bold jewels.</p>
+            </div>
+            <div class="yarn-card bg-white p-8 rounded-3xl shadow-sm border">
+              <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-6">🧵</div>
+              <h5 class="text-2xl font-semibold mb-3">Perfect Tension</h5>
+              <p class="text-neutral-600">Consistent weights for every project — from lace to chunky.</p>
+            </div>
+            <div class="yarn-card bg-white p-8 rounded-3xl shadow-sm border">
+              <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl mb-6">♻️</div>
+              <h5 class="text-2xl font-semibold mb-3">Sustainable</h5>
+              <p class="text-neutral-600">Traceable supply chain. Plastic-free packaging.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="yarn-card bg-neutral-900 text-white p-12 rounded-3xl">
+          <h3 class="text-4xl font-semibold mb-6">Crafted for those who create with heart</h3>
+          <p class="text-neutral-400 text-lg">
+            Every skein is chosen not just for quality, but for the joy it brings to your hands and the stories it helps you tell.
+          </p>
+          <button class="mt-10 bg-amber-400 text-neutral-900 px-8 py-4 rounded-3xl font-medium">
+            Explore Our Yarns →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section id="shop-section" class="py-20 bg-neutral-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-4xl font-bold text-center mb-4">Signature Collection</h2>
+      <p class="text-center text-neutral-600 mb-12">Handpicked yarns loved by makers worldwide</p>
+
+      <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <!-- Product 1 -->
+        <div class="yarn-card bg-white rounded-3xl overflow-hidden">
+          <img src="/static/images/Rainbow Milk Cotton Yarn.avif" class="w-full h-80 object-cover">
+          <div class="p-6">
+            <h5 class="font-semibold">Rainbow Milk Cotton Yarn</h5>
+            <p class="text-sm text-neutral-500">Premium Blend • 100g, 200m</p>
+            <div class="flex justify-between items-end mt-6">
+              <span class="text-3xl font-bold">KES 450</span>
+              <button onclick="alert('Added to cart! 🧶')" class="bg-neutral-900 text-white px-6 py-3 rounded-2xl text-sm">Add to Bag</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="yarn-card bg-white rounded-3xl overflow-hidden">
+          <img src="/static/images/Baby Chenille Yarn.jpg" class="w-full h-80 object-cover">
+          <div class="p-6">
+            <h5 class="font-semibold">Baby Chenille Yarn</h5>
+            <p class="text-sm text-neutral-500">Ultra-soft • 100g, silky texture</p>
+            <div class="flex justify-between items-end mt-6">
+              <span class="text-3xl font-bold">KES 550</span>
+              <button onclick="alert('Added to cart! 🧶')" class="bg-neutral-900 text-white px-6 py-3 rounded-2xl text-sm">Add to Bag</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="yarn-card bg-white rounded-3xl overflow-hidden">
+          <img src="/static/images/organic cotton yarn.jpg" class="w-full h-80 object-cover">
+          <div class="p-6">
+            <h5 class="font-semibold">Organic Cotton Yarn</h5>
+            <p class="text-sm text-neutral-500">100% Organic • 50g, eco-friendly</p>
+            <div class="flex justify-between items-end mt-6">
+              <span class="text-3xl font-bold">KES 510</span>
+              <button onclick="alert('Added to cart! 🧶')" class="bg-neutral-900 text-white px-6 py-3 rounded-2xl text-sm">Add to Bag</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="yarn-card bg-white rounded-3xl overflow-hidden">
+          <img src="/static/images/Velvet Yarn.webp" class="w-full h-80 object-cover">
+          <div class="p-6">
+            <h5 class="font-semibold">Velvet Yarn</h5>
+            <p class="text-sm text-neutral-500">Luxurious • 100g, 130m, premium feel</p>
+            <div class="flex justify-between items-end mt-6">
+              <span class="text-3xl font-bold">KES 750</span>
+              <button onclick="alert('Added to cart! 🧶')" class="bg-neutral-900 text-white px-6 py-3 rounded-2xl text-sm">Add to Bag</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM / MAKERS -->
+  <section class="py-20 bg-gradient-to-b from-white to-neutral-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-4xl font-bold text-center mb-12">Meet Our Makers</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-3xl p-6 flex gap-6 yarn-card">
+          <img src="https://picsum.photos/id/64/300/300" class="w-32 h-32 rounded-3xl object-cover">
+          <div class="pt-2">
+            <h5 class="font-semibold text-xl">Mulki Njoki</h5>
+            <p class="text-amber-600">Master Dyer • Kenya</p>
+            <p class="mt-3 text-neutral-600">"Color is emotion captured in fiber."</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 flex gap-6 yarn-card">
+          <img src="https://picsum.photos/id/1005/300/300" class="w-32 h-32 rounded-3xl object-cover">
+          <div class="pt-2">
+            <h5 class="font-semibold text-xl">Luca Bianchi</h5>
+            <p class="text-amber-600">Mill Owner • Italy</p>
+            <p class="mt-3 text-neutral-600">"The best yarns begin with respect for the animal and the land."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="py-16 bg-neutral-900 text-white">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-3 text-center">
+      <div>
+        <h1 class="text-5xl font-bold text-amber-400">124</h1>
+        <p class="mt-2">Yarn Varieties</p>
+      </div>
+      <div>
+        <h1 class="text-5xl font-bold text-amber-400">18k+</h1>
+        <p class="mt-2">Happy Makers</p>
+      </div>
+      <div>
+        <h1 class="text-5xl font-bold text-amber-400">47</h1>
+        <p class="mt-2">Countries Shipped</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-5 gap-8">
+        <div>
+          <div class="flex items-center gap-3 text-2xl font-bold logo-font">
+            <span>🧶</span> Thread &amp; Hue
+          </div>
+          <p class="text-neutral-500 mt-4">Premium yarn for intentional makers.</p>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Shop</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Best Sellers</a></li>
+            <li><a href="#">Sale</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Learn</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#">Yarn Weights Guide</a></li>
+            <li><a href="#">Care Instructions</a></li>
+            <li><a href="#">Color Theory</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Community</h6>
+          <ul class="space-y-2 text-sm text-neutral-600">
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Ravelry Group</a></li>
+            <li><a href="#">Free Patterns</a></li>
+          </ul>
+        </div>
+        <div>
+          <h6 class="font-semibold mb-4">Newsletter</h6>
+          <p class="text-sm text-neutral-600 mb-4">Monthly yarn drops &amp; maker stories.</p>
+          <input type="email" placeholder="your@email.com" class="w-full border border-neutral-200 rounded-3xl px-5 py-4 text-sm">
+          <button class="mt-4 w-full bg-neutral-900 text-white py-4 rounded-3xl">Subscribe</button>
+        </div>
+      </div>
+      <hr class="my-10">
+      <p class="text-center text-neutral-400 text-sm">© 2026 Thread &amp; Hue. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple Tailwind script for responsiveness
+    console.log("%c🧶 Thread & Hue - Soft UI Inspired Experience Ready", "color:#d97706; font-family:monospace");
+  </script>
+</body>
+</html>

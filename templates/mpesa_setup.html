@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>M-Pesa Setup - YarnQuest</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    .logo-font { font-family: 'Playfair Display', serif; }
+    code { background-color: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-red-50 to-orange-50 font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a class="text-aqua flex items-center gap-3 text-2xl font-bold logo-font" style="color: aqua;" href="{{ url_for('index') }}">
+        <span class="text-4xN">🧶</span> YarnQuests
+      </a>
+      <span class="text-red-600 font-semibold">M-Pesa Configuration Required</span>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="min-h-screen py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- HEADER -->
+      <div class="bg-white rounded-3xl shadow-lg p-8 mb-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-exclamation-triangle text-3xl text-red-600"></i>
+          </div>
+          <div>
+            <h1 class="text-4xl font-bold text-gray-900 logo-font">M-Pesa Setup Required</h1>
+            <p class="text-gray-600 mt-2">Your M-Pesa payment credentials are not configured</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETUP STEPS -->
+      <div class="space-y-6">
+        
+        <!-- Step 1 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-amber-500 text-white font-bold text-lg">1</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Create Daraja Account</h2>
+              <p class="text-gray-600 mb-4">Visit Safaricom's Daraja Portal</p>
+              <a href="https://developer.safaricom.co.ke" target="_blank" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition">
+                <i class="fa-solid fa-external-link mr-2"></i>Go to Daraja Portal
+              </a>
+              <p class="text-sm text-gray-500 mt-4">
+                <i class="fa-solid fa-info-circle mr-2"></i>
+                If you don't have an account, click "Sign Up" first
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-amber-500 text-white font-bold text-lg">2</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Create Sandbox Application</h2>
+              <ol class="list-decimal list-inside space-y-3 text-gray-700 mb-4">
+                <li>Log in to Daraja Portal</li>
+                <li>Click "Create App" button</li>
+                <li>Fill in app details:
+                  <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li><strong>App Name:</strong> YarnQuest Payments</li>
+                    <li><strong>Description:</strong> M-Pesa payment processing for online yarn shop</li>
+                  </ul>
+                </li>
+                <li>Click "Create"</li>
+              </ol>
+              <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                <p class="text-sm text-blue-900">
+                  <i class="fa-solid fa-info-circle mr-2"></i>
+                  <strong>You'll receive:</strong> Consumer Key and Consumer Secret
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-amber-500 text-white font-bold text-lg">3</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Enable Lipa Na M-Pesa Online</h2>
+              <ol class="list-decimal list-inside space-y-3 text-gray-700 mb-4">
+                <li>In your app settings, find "Lipa Na M-Pesa Online"</li>
+                <li>Click "Enable"</li>
+                <li>You'll receive a <strong>Passkey</strong> - copy it!</li>
+              </ol>
+              <div class="bg-green-50 border-l-4 border-green-500 p-4">
+                <p class="text-sm text-green-900">
+                  <i class="fa-solid fa-check-circle mr-2"></i>
+                  <strong>You'll now have:</strong><br/>
+                  • Consumer Key<br/>
+                  • Consumer Secret<br/>
+                  • Passkey
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-amber-500 text-white font-bold text-lg">4</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Update Configuration File</h2>
+              <p class="text-gray-600 mb-4">Edit <code>mpesa_config.py</code> in your project folder:</p>
+              <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto mb-4">
+<pre>MPESA_CONFIG = {
+    'CONSUMER_KEY': '<span class="text-green-400">your_consumer_key_here</span>',
+    'CONSUMER_SECRET': '<span class="text-green-400">your_consumer_secret_here</span>',
+    'BUSINESS_SHORT_CODE': '<span class="text-yellow-400">174379</span>',  # Keep for testing
+    'PASSKEY': '<span class="text-green-400">your_passkey_here</span>',
+    # ... rest of config
+}</pre>
+              </div>
+              <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                <p class="text-sm text-yellow-900">
+                  <i class="fa-solid fa-warning mr-2"></i>
+                  Replace the placeholder values with your actual credentials
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-amber-500 text-white font-bold text-lg">5</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Restart the Application</h2>
+              <p class="text-gray-600 mb-4">Stop and restart your Flask application:</p>
+              <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                <p>Press CTRL+C in the terminal where the app is running</p>
+                <p class="mt-2">Then run: <code>python app.py</code></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <div class="flex gap-4">
+            <div class="flex-shrink-0">
+              <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-green-500 text-white font-bold text-lg">6</div>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-3">Test Payment</h2>
+              <p class="text-gray-600 mb-4">You can now test the payment with:</p>
+              <div class="space-y-3">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <p class="font-semibold text-gray-900">Test Phone:</p>
+                  <code>254708374149</code>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <p class="font-semibold text-gray-900">Test PIN:</p>
+                  <code>12345</code>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                  <p class="font-semibold text-gray-900">Amount:</p>
+                  <p class="text-gray-600">Any amount (won't be charged in sandbox)</p>
+                </div>
+              </div>
+              <div class="bg-green-50 border-l-4 border-green-500 p-4 mt-4">
+                <p class="text-sm text-green-900">
+                  <i class="fa-solid fa-check-circle mr-2"></i>
+                  You're ready to test M-Pesa payments!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TROUBLESHOOTING -->
+      <div class="bg-white rounded-2xl shadow-lg p-8 mt-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 logo-font">Troubleshooting</h2>
+        
+        <div class="space-y-4">
+          <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+            <summary class="font-semibold text-gray-900">❓ I can't find my Consumer Key/Secret</summary>
+            <div class="mt-4 text-gray-700">
+              In Daraja Portal:
+              <ol class="list-decimal list-inside ml-4 mt-2">
+                <li>Log in to your account</li>
+                <li>Select your app</li>
+                <li>Go to "API Keys" section</li>
+                <li>You'll see Consumer Key and Consumer Secret there</li>
+              </ol>
+            </div>
+          </details>
+
+          <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+            <summary class="font-semibold text-gray-900">❓ Where is the Passkey?</summary>
+            <div class="mt-4 text-gray-700">
+              <ol class="list-decimal list-inside ml-4 mt-2">
+                <li>In your app, find "Lipa Na M-Pesa Online"</li>
+                <li>The Passkey is displayed when you enable this service</li>
+                <li>Copy it and save it in mpesa_config.py</li>
+              </ol>
+            </div>
+          </details>
+
+          <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+            <summary class="font-semibold text-gray-900">❓ Still getting "failed to access token"?</summary>
+            <div class="mt-4 text-gray-700">
+              Check these:
+              <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                <li>All three credentials are correctly copied</li>
+                <li>No extra spaces before/after credentials</li>
+                <li>Application has been restarted after updating config</li>
+                <li>Check the terminal for error messages</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+            <summary class="font-semibold text-gray-900">❓ How do I get production credentials?</summary>
+            <div class="mt-4 text-gray-700">
+              <ol class="list-decimal list-inside ml-4 mt-2">
+                <li>In Daraja, upgrade your app to production</li>
+                <li>Contact Safaricom support to activate production keys</li>
+                <li>You'll get production Consumer Key/Secret</li>
+                <li>Update BASE_URL to: https://api.safaricom.co.ke</li>
+                <li>Update your config and restart</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- BACK BUTTON -->
+      <div class="mt-8 text-center">
+        <a href="{{ url_for('shop') }}" class="inline-block bg-amber-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-amber-600 transition">
+          <i class="fa-solid fa-arrow-left mr-2"></i>Back to Shop
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Payment Successful - YarnQuest</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,800" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+    .logo-font { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-neutral-50 font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-500 shadow-none my-3 navbar-transparent relative bg-white/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 w-full">
+      <div class="flex items-center justify-between">
+        <a class="navbar-brand text-aqua" style="color: aqua; flex items-center gap-3 text-2xl font-bold logo-font" href="{{ url_for('index') }}">
+          <span class="text-4xN">🧶</span> YarnQuests
+        </a>
+        <div class="flex items-center gap-x-6">
+          <a href="{{ url_for('shop') }}" class="text-gray-700 font-medium hover:text-amber-300 transition">Continue Shopping</a>
+          <a href="{{ url_for('logout') }}" class="bg-amber-500 text-white px-6 py-2 rounded-full font-medium hover:bg-amber-600 transition">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SUCCESS CONTENT -->
+  <section class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-50 pt-20 pb-12">
+    <div class="max-w-2xl w-full px-6">
+      <div class="bg-white rounded-3xl shadow-2xl p-12 text-center">
+        <!-- Success Icon -->
+        <div class="mb-8 flex justify-center">
+          <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-check text-5xl text-green-500"></i>
+          </div>
+        </div>
+
+        <!-- Success Message -->
+        <h1 class="text-4xl font-bold text-gray-900 mb-4 logo-font">Payment Successful!</h1>
+        <p class="text-xl text-gray-600 mb-8">Your order has been processed successfully.</p>
+
+        <!-- Order Details -->
+        <div class="bg-gray-50 rounded-2xl p-8 mb-8 text-left">
+          <h2 class="text-lg font-semibold text-gray-900 mb-6">Order Details</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between border-b border-gray-200 pb-4">
+              <span class="text-gray-700">Order ID:</span>
+              <span class="font-mono font-semibold text-gray-900">
+                {% if session.get('completed_order') %}
+                  ORDER-{{ session.get('completed_order').get('order_id') }}
+                {% else %}
+                  #{{ range(1000, 9999) | random }}
+                {% endif %}
+              </span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 pb-4">
+              <span class="text-gray-700">Receipt Number:</span>
+              <span class="font-mono font-semibold text-gray-900">
+                {% if session.get('completed_order') %}
+                  {{ session.get('completed_order').get('receipt') }}
+                {% else %}
+                  TEST-RECEIPT-{{ range(100000, 999999) | random }}
+                {% endif %}
+              </span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 pb-4">
+              <span class="text-gray-700">Amount:</span>
+              <span class="font-semibold text-gray-900">
+                {% if session.get('completed_order') %}
+                  Ksh {{ session.get('completed_order').get('amount') }}
+                {% else %}
+                  Ksh 0.00
+                {% endif %}
+              </span>
+            </div>
+            <div class="flex justify-between border-b border-gray-200 pb-4">
+              <span class="text-gray-700">Date:</span>
+              <span class="font-semibold text-gray-900">{{ now }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-700">Status:</span>
+              <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold text-sm">Completed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8 text-left rounded">
+          <h3 class="font-semibold text-blue-900 mb-2">What's Next?</h3>
+          <ul class="text-blue-800 space-y-2 text-sm">
+            <li>✓ Your order has been confirmed</li>
+            <li>✓ A receipt has been sent to your email</li>
+            <li>✓ Vendors will be notified to prepare your items</li>
+            <li>✓ You'll receive tracking information soon</li>
+          </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+          <a href="{{ url_for('shop') }}" class="flex-1 bg-amber-500 text-white py-3 rounded-lg font-bold hover:bg-amber-600 transition">
+            <i class="fa-solid fa-bag-shopping mr-2"></i>Continue Shopping
+          </a>
+          <a href="{{ url_for('index') }}" class="flex-1 bg-white border-2 border-gray-300 text-gray-900 py-3 rounded-lg font-bold hover:bg-gray-50 transition">
+            <i class="fa-solid fa-home mr-2"></i>Back to Home
+          </a>
+        </div>
+
+        <!-- Support -->
+        <p class="text-gray-500 text-sm mt-8">
+          Need help? <a href="#" class="text-amber-500 font-semibold hover:text-amber-600">Contact Support</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p class="text-gray-400">&copy; 2024 YarnQuest. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

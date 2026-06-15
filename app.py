@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import mysql.connector
 from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -78,18 +79,27 @@ def get_items():
 
 @app.route('/')
 def index():
-    if session.get("user_id"):
-        return redirect(url_for("dashboard"))
-
     items = get_items()
-    return render_template('home.html', items=items)
+    cart_count = len(session.get('cart', []))
+    return render_template('home.html', items=items, cart_count=cart_count, session=session)
 
 
 @app.route('/crafters')
 def crafters():
     items = get_items()
     cart_count = len(session.get('cart', []))
-    return render_template('crafters.html', items=items, cart_count=cart_count)
+    return redirect(url_for('shop'))
+
+
+@app.route('/shop')
+def shop():
+    items = get_items()
+    cart_count = len(session.get('cart', []))
+    
+    # Extract unique categories from items
+    categories = sorted(set(item.get('category', 'Other') for item in items if item.get('category')))
+    
+    return render_template('shop.html', items=items, categories=categories, cart_count=cart_count, session=session)
 
 
 @app.route('/cart/add/<int:item_id>')
@@ -101,10 +111,10 @@ def cart_add(item_id):
         flash('Item added to cart.', 'success')
     else:
         flash('Item is already in your cart.', 'info')
-    return redirect(url_for('crafters'))
+    return redirect(url_for('shop'))
 
 
-@app.route('/cart/remove/<int:item_id>')
+@app.route('/cart/remove/<int:item_id>', methods=['GET', 'POST'])
 def cart_remove(item_id):
     cart = session.get('cart', [])
     if item_id in cart:
@@ -117,22 +127,33 @@ def cart_remove(item_id):
 @app.route('/cart')
 def cart():
     cart_items = session.get('cart', [])
+    
+    # If cart is empty, redirect to home page
+    if not cart_items:
+        flash('Your cart is empty. Start shopping!', 'info')
+        return redirect(url_for('index'))
+    
     items = []
     total = 0.00
 
-    if cart_items:
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor(dictionary=True)
-            placeholders = ','.join(['%s'] * len(cart_items))
-            query = f'SELECT items.*, users.full_name AS vendor_name FROM items JOIN users ON items.vendor_id = users.id WHERE items.id IN ({placeholders})'
-            cursor.execute(query, tuple(cart_items))
-            items = cursor.fetchall()
-        finally:
-            cursor.close()
-            conn.close()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        placeholders = ','.join(['%s'] * len(cart_items))
+        query = f'SELECT items.*, users.full_name AS vendor_name FROM items JOIN users ON items.vendor_id = users.id WHERE items.id IN ({placeholders})'
+        cursor.execute(query, tuple(cart_items))
+        items = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
 
+    # Convert prices to float and calculate total
+    for item in items:
+        item['price'] = float(item['price'])
+    
     total = sum(item['price'] for item in items) if items else 0.00
+    total = float(total)  # Ensure total is float
+    
     return render_template('cart.html', items=items, total=total, cart_count=len(cart_items))
 
 
@@ -155,7 +176,11 @@ def login():
             session['user_id'] = user['id']
             session['role'] = user['role']
             session['name'] = user['full_name']
-            return redirect(url_for('dashboard'))
+            # Redirect vendors to dashboard, crafters to shop
+            if user['role'] == 'vendor':
+                return redirect(url_for('dashboard'))
+            else:
+                return redirect(url_for('shop'))
 
         flash('Invalid email or password.', 'danger')
 
@@ -190,7 +215,7 @@ def register():
             cursor.close()
             conn.close()
 
-        flash('Registration successful. Please log in.', 'success')
+        flash('Registration successful. You can now log in!', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html')
@@ -226,13 +251,13 @@ def dashboard():
     if not items:
         sample_items = SAMPLE_ITEMS
 
-    return render_template('dashboard.html', user=user_data, items=items, sample_items=sample_items, role=role)
+    return redirect(url_for('shop'))
 
 
 @app.route('/vendor/add-item', methods=['GET', 'POST'])
 def add_item():
     if session.get('role') != 'vendor':
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('shop'))
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -252,7 +277,7 @@ def add_item():
             )
             conn.commit()
             flash('Item added successfully.', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('shop'))
         finally:
             cursor.close()
             conn.close()
@@ -265,14 +290,15 @@ def pay(item_id):
     if not session.get('user_id'):
         return redirect(url_for('login'))
 
-    flash('MPESA payment gateway integration placeholder: request payment via your phone and confirm.', 'info')
-    return redirect(url_for('dashboard'))
+    flash('Payment processing not yet implemented.', 'info')
+    return redirect(url_for('shop'))
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    flash('You have been logged out successfully.', 'info')
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
